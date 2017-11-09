@@ -19,6 +19,7 @@ function Get-DllVersions($root) {
 
 }
 
+# Get all processes along with command lines
 function Get-ProcAll() {
     Get-WmiObject Win32_Process | select Handle, Name, CommandLine
 
@@ -27,9 +28,12 @@ function Get-ProcAll() {
 function Get-PortProcesses($Pattern) {
     $procs = Get-ProcAll
     $h = @{}
-    $procs | % {$h[$_.Handle] = $_}
+    $procs | % { $h.Add($_.Handle.ToString(), $_) }
     $listening = Get-NetTCPConnection|where {$_.LocalPort -like $pattern } | select -ExpandProperty OwningProcess | Sort-Object -Unique 
-    $result = $listening | % { $h[$_]  }
+    $result = $listening | % {
+        $procinfo = $h.Get_Item($_.ToString())
+        $procInfo 
+    }
     $result
     
 }
@@ -38,4 +42,3 @@ function Get-Procs() {
     Get-WmiObject Win32_Process
 }
 
-Get-PortProcesses 1*
