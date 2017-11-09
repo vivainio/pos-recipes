@@ -42,3 +42,8 @@ function Get-Procs() {
     Get-WmiObject Win32_Process
 }
 
+# Extract references from csproj
+function Import-CsDeps ($file) {
+    $x = [xml](gc $file)
+    $x.Project.ItemGroup.Reference
+}
