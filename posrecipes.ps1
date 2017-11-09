@@ -10,13 +10,11 @@
 function Get-DllVersions($root) {
     $dlls = Get-ChildItem -Recurse -Include "*.dll","*.exe" $root 
 
-    #write-host $dlls
-
-    $versions = $dlls | foreach { DllInfo($_) } | Sort-Object { $_.Path.BaseName } | foreach { 
-        ("{0} '{1}' {2}" -f $_.Path.Name,$_.Ver,$_.Path.DirectoryName) 
-    
-    } | write-host
-
+    $versions = $dlls | foreach { DllInfo($_) } | Sort-Object { $_.Path.BaseName } | `
+        Select @{Name="Name"; Expression= { $_.Path.Name }}, `
+               @{Name="Ver"; Expression= { $_.Ver}}, `
+               @{Name="Dir"; Expression= { $_.Path.DirectoryName}}
+    $versions
 }
 
 # Get all processes along with command lines
